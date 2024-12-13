@@ -14,8 +14,11 @@ import 'model/prediction.dart';
 /// Provides functionality to fetch autocomplete predictions and detailed
 /// place information based on user queries and place IDs.
 class GooglePlacesAutocomplete {
-  /// Callback listener for delivering autocomplete predictions to the UI.
-  final ListenerAutoCompletePredictions predictionsListner;
+  /// Callback listner for delivering autocomplete predictions to the UI.
+  final ListnerAutoCompletePredictions predictionsListner;
+
+  /// Callback listner for delivering loading status.
+  final ListnerLoadingPredictions? loadingListner;
 
   /// The Google Places API key required to make requests.
   final String apiKey;
@@ -62,6 +65,7 @@ class GooglePlacesAutocomplete {
   GooglePlacesAutocomplete({
     required this.predictionsListner,
     required this.apiKey,
+    this.loadingListner,
     this.debounceTime = 300,
     this.countries,
     this.primaryTypes,
@@ -100,9 +104,13 @@ class GooglePlacesAutocomplete {
     if (!_isInitialized) {
       throw Exception("Google Places Service is not initialized.");
     }
+
     const String url = "https://places.googleapis.com/v1/places:autocomplete";
 
     try {
+      // Loading starts
+      loadingListner?.call(true);
+
       final response = await _dio.post(
         url,
         options: Options(headers: {
@@ -134,8 +142,14 @@ class GooglePlacesAutocomplete {
         predictions.add(prediction);
       }
 
+      // Loading ends
+      loadingListner?.call(false);
+
       predictionsListner.call(predictions.toList());
     } catch (e) {
+      // Loading ends
+      loadingListner?.call(false);
+
       debugPrint("GooglePlacesAutocomplete Error: $e");
     }
   }
@@ -183,5 +197,10 @@ class GooglePlacesAutocomplete {
 /// A type definition for the autocomplete predictions callback.
 ///
 /// This function is called whenever new predictions are fetched from the API.
-typedef ListenerAutoCompletePredictions = void Function(
+typedef ListnerAutoCompletePredictions = void Function(
     List<Prediction> predictions);
+
+/// A type definition for the loading of autocomplete predictions.
+///
+/// This function is called whenever [getPredictions] method calls with a bolean.
+typedef ListnerLoadingPredictions = void Function(bool isPredictionLoading);
