@@ -185,7 +185,3 @@ Feel free to file issues on the [GitHub](https://github.com/Cuboid-Inc/google_pl
 ## License
 
 This package is distributed under the MIT License. See the [LICENSE](https://raw.githubusercontent.com/Cuboid-Inc/google_places_autocomplete/main/LICENSE) file for details.
-
-```
-
-```
