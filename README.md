@@ -5,6 +5,8 @@
 
 ### Google Places Autocomplete is a Flutter package for integrating Google Places(new) API into your app. This package enables autocomplete suggestions, detailed place information retrieval, and more. It simplifies working with the Google Places API in Flutter projects.
 
+#### The Google Places Autocomplete package stands out for its UI-agnostic design, enabling developers to seamlessly integrate location-based functionality without being restricted by predefined UI components. This approach allows complete flexibility in crafting custom user interfaces while the package efficiently handles data retrieval, including location predictions and detailed place information.
+
 Google Places Autocomplete is a comprehensive Flutter package that facilitates seamless integration of the new Google Places API into your app. It empowers developers to provide rich, location-based features such as autocomplete suggestions, detailed place information retrieval, and interactive maps.
 
 With this package, users can easily search for locations using Google’s powerful Places Autocomplete API. The package supports advanced features like filtering results by country, type, or language, and includes debounce functionality to ensure a smooth user experience by reducing unnecessary API calls. Additionally, it enables fetching detailed place information, including addresses, geographical coordinates, phone numbers, and more.
@@ -156,6 +158,7 @@ class _PlaceSearchScreenState extends State<PlaceSearchScreen> {
 GooglePlacesAutocomplete({
   required String apiKey,
   required ListenerAutoCompletePredictions predictionsListner,
+  ListnerLoadingPredictions? loadingListner;
   int debounceTime = 300,
   List<String>? countries,
   List<String>? primaryTypes,

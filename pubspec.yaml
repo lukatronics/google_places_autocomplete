@@ -1,7 +1,7 @@
 name: google_places_autocomplete
-description: A Flutter package for integrating Google Places(new) API into your app. This package enables autocomplete suggestions, detailed place information retrieval, and more. It simplifies working with the Google Places API in Flutter projects.
+description: Seamlessly integrate Google Places API into your Flutter app with this package. Get location autocomplete, detailed place info, and flexible UI implementation.
 
-version: 0.0.3
+version: 0.0.4
 homepage: https://github.com/Cuboid-Inc/google_places_autocomplete
 repository: https://github.com/Cuboid-Inc/google_places_autocomplete
 
@@ -20,5 +20,19 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^4.0.0
+
+platforms:
+  android:
+  ios:
+  linux:
+  macos:
+  windows:
+
+topics:
+  - network
+  - http
+  - google-places
+  - flexible-ui
+  - map
 
 flutter:

@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.0.4]
+
+### Update README & Documentation
+
+- Update README file and some package documentation.
+
 ## [0.0.3]
 
 ### ADD Listner for prediction loading

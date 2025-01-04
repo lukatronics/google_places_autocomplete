@@ -23,11 +23,11 @@ class PlacesAutocompleteScreen extends StatefulWidget {
   const PlacesAutocompleteScreen({super.key});
 
   @override
-  _PlacesAutocompleteScreenState createState() =>
-      _PlacesAutocompleteScreenState();
+  PlacesAutocompleteScreenState createState() =>
+      PlacesAutocompleteScreenState();
 }
 
-class _PlacesAutocompleteScreenState extends State<PlacesAutocompleteScreen> {
+class PlacesAutocompleteScreenState extends State<PlacesAutocompleteScreen> {
   final TextEditingController _searchController = TextEditingController();
 
   /// The Google Places API key (replace with your actual API key).

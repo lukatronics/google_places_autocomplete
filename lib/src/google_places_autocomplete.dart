@@ -57,6 +57,7 @@ class GooglePlacesAutocomplete {
   /// Constructs a [GooglePlacesAutocomplete] instance.
   ///
   /// - [predictionsListner]: Callback for receiving predictions.
+  /// - [loadingListner]: Callback for receiving prediction loading state.
   /// - [apiKey]: The Google Places API key.
   /// - [debounceTime]: The time delay for debouncing input (minimum 200ms).
   /// - [countries]: List of country codes for filtering predictions.
