@@ -1,13 +1,19 @@
 import 'dart:io';
 
 import 'package:dio/dio.dart';
-import 'package:dio/io.dart';
+import 'package:dio/io.dart' if (dart.library.js) 'package:dio/browser.dart';
 import 'package:flutter/foundation.dart';
 
+/// Internal API service class to handle HTTP requests.
+///
+/// This class provides a singleton instance for making API calls to the Google Places API.
+/// It handles platform-specific implementations for both web and mobile.
 class DioAPIServices {
   static DioAPIServices get instance => _instance;
   static final DioAPIServices _instance = DioAPIServices._();
-  DioAPIServices._();
+  DioAPIServices._() {
+    _launchDio();
+  }
   final Dio _dio = Dio();
 
   Dio _launchDio() {
@@ -19,16 +25,29 @@ class DioAPIServices {
         responseBody: false,
         logPrint: (object) {},
         error: true));
-    (_dio.httpClientAdapter as IOHttpClientAdapter).createHttpClient = () {
-      final client =
-          HttpClient(context: SecurityContext(withTrustedRoots: true));
-      return client;
-    };
+
+    // Configure based on platform using universal_io
+    // This handles both web and mobile platforms seamlessly
+    if (!kIsWeb) {
+      // For mobile/desktop platforms
+      final adapter = IOHttpClientAdapter();
+      adapter.createHttpClient = () {
+        final client = HttpClient();
+        // Only accept valid certificates in production
+        if (kDebugMode) {
+          client.badCertificateCallback = (cert, host, port) => true;
+        }
+        return client;
+      };
+      _dio.httpClientAdapter = adapter;
+    }
+    // For web, the default BrowserHttpClientAdapter is used
+
     _dio.options.connectTimeout = const Duration(seconds: 20);
     _dio.options.receiveTimeout = const Duration(seconds: 20);
     _dio.options.sendTimeout = const Duration(seconds: 30);
     _dio.options.followRedirects = false;
-    _dio.options.validateStatus = (s) {
+    _dio.options.validateStatus = (int? s) {
       if (s != null) {
         return s < 500;
       } else {
@@ -47,10 +66,8 @@ class DioAPIServices {
     void Function(int, int)? onSendProgress,
     void Function(int, int)? onReceiveProgress,
   }) async {
-    final dio = _launchDio();
-
     try {
-      final response = await dio.post(url,
+      final response = await _dio.post(url,
           data: data,
           queryParameters: queryParameters,
           options: options,
@@ -77,9 +94,8 @@ class DioAPIServices {
     CancelToken? cancelToken,
     void Function(int, int)? onReceiveProgress,
   }) async {
-    final dio = _launchDio();
     try {
-      final response = await dio.get(url,
+      final response = await _dio.get(url,
           data: data,
           queryParameters: queryParameters,
           options: options,

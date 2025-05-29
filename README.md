@@ -2,26 +2,20 @@
 
 ![Flutter 3.24.4](https://img.shields.io/badge/Flutter-3.24.4-blue)
 [![pub package](https://img.shields.io/pub/v/google_places_autocomplete.svg?label=google_places_autocomplete&color=blue)](https://pub.dev/packages/google_places_autocomplete)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-### Google Places Autocomplete is a Flutter package for integrating Google Places(new) API into your app. This package enables autocomplete suggestions, detailed place information retrieval, and more. It simplifies working with the Google Places API in Flutter projects.
+## Overview
 
-#### The Google Places Autocomplete package stands out for its UI-agnostic design, enabling developers to seamlessly integrate location-based functionality without being restricted by predefined UI components. This approach allows complete flexibility in crafting custom user interfaces while the package efficiently handles data retrieval, including location predictions and detailed place information.
+Google Places Autocomplete is a Flutter package that provides seamless integration with the Google Places API. This package enables developers to implement location search functionality with autocomplete suggestions, detailed place information, and more—all while maintaining complete control over the UI.
 
-Google Places Autocomplete is a comprehensive Flutter package that facilitates seamless integration of the new Google Places API into your app. It empowers developers to provide rich, location-based features such as autocomplete suggestions, detailed place information retrieval, and interactive maps.
+### Key Features
 
-With this package, users can easily search for locations using Google’s powerful Places Autocomplete API. The package supports advanced features like filtering results by country, type, or language, and includes debounce functionality to ensure a smooth user experience by reducing unnecessary API calls. Additionally, it enables fetching detailed place information, including addresses, geographical coordinates, phone numbers, and more.
-
-Designed with developers in mind, the package simplifies complex interactions with the Google Places API through a clean, modular structure. It integrates seamlessly with Flutter UI components, and works well alongside `google_maps_flutter` for displaying maps and location data. Whether you’re building a travel app, a delivery service, or any location-aware app, this package offers a robust, flexible solution to meet your needs.
-
-With detailed documentation, examples, and customization options, Google Places Autocomplete provides everything you need to deliver accurate, location-based functionality in your Flutter applications.
-
-## Features
-
-- Autocomplete search with suggestions and predictions.
-- Fetch detailed place information (address, phone numbers, coordinates, etc.).
-- Support for filtering by country, place type, and language.
-- Debounce functionality to improve performance and UX.
-- Integration with `google_maps_flutter` for seamless map interactions.
+- **UI-Agnostic Design**: Implement your own custom UI while the package handles data retrieval
+- **Autocomplete Search**: Get real-time location suggestions as users type
+- **Detailed Place Information**: Access comprehensive place data including addresses, coordinates, phone numbers, and more
+- **Cross-Platform Support**: Works on Android, iOS, Web, and desktop platforms
+- **Customizable Filtering**: Filter results by country, place type, or language
+- **Performance Optimized**: Built-in debounce functionality to reduce unnecessary API calls
 
 ## Getting Started
 
@@ -29,8 +23,8 @@ With detailed documentation, examples, and customization options, Google Places 
 
 To use this package, you need:
 
-1. A Google Cloud Platform project with the **Places API(new)** enabled.
-2. An API key for accessing the Places API. You can obtain an API key by following the [Google API Documentation](https://developers.google.com/maps/documentation/places/web-service/get-api-key).
+1. A Google Cloud Platform project with the **Places API** enabled
+2. An API key for accessing the Places API ([Get API Key](https://developers.google.com/maps/documentation/places/web-service/get-api-key))
 
 ### Installation
 
@@ -38,10 +32,10 @@ Add the following to your `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  google_places_autocomplete: latest_version
+  google_places_autocomplete: ^0.1.0
 ```
 
-Then, run:
+Then run:
 
 ```bash
 flutter pub get
@@ -51,140 +45,210 @@ flutter pub get
 
 ### Basic Setup
 
-- Import the package:
+Import the package:
 
 ```dart
 import 'package:google_places_autocomplete/google_places_autocomplete.dart';
 ```
 
-- Initialize the service:
+Initialize the service with required parameters:
 
 ```dart
-final googlePlaces = GooglePlacesAutocomplete(
-  apiKey: "YOUR_API_KEY",
+final placesService = GooglePlacesAutocomplete(
+  apiKey: 'YOUR_API_KEY',
+  predictionsListner: (predictions) {
+    // Handle the predictions here
+    setState(() {
+      _predictions = predictions;
+    });
+  },
+);
+
+// Always initialize the service before use
+placesService.initialize();
+```
+
+### Fetching Place Predictions
+
+To get autocomplete predictions as the user types:
+
+```dart
+// Call this method when the user enters text in the search field
+placesService.getPredictions('user input text');
+```
+
+### Fetch Place Details
+
+Once a user selects a prediction, you can fetch detailed information about the place:
+
+```dart
+final placeDetails = await placesService.getPredictionDetail('PLACE_ID');
+
+// Access various place details
+final address = placeDetails.formattedAddress;
+final phoneNumber = placeDetails.formattedPhoneNumber;
+final location = placeDetails.geometry?.location;
+final latitude = location?.lat;
+final longitude = location?.lng;
+```
+
+### Advanced Configuration
+
+The package supports several configuration options:
+
+```dart
+final placesService = GooglePlacesAutocomplete(
+  apiKey: 'YOUR_API_KEY',
+  debounceTime: 300,  // Milliseconds to wait before making API call (default: 300)
+  countries: ['us', 'ca'],  // Restrict results to specific countries
+  primaryTypes: ['restaurant', 'cafe'], // Filter results by place types
+  language: 'en',  // Specify the language for results
   predictionsListner: (predictions) {
     // Handle predictions
   },
-  debounceTime: 300, // Customize debounce time
-  countries: ['us'], // Restrict to the US
-  primaryTypes: ['locality'], // Focus on specific types
+  loadingListner: (isLoading) {
+    // Track loading state
+  },
 );
-
-googlePlaces.initialize();
-
 ```
 
-- Get predictions:
+## Example
+
+A complete implementation example showing a search field with autocomplete predictions:
 
 ```dart
-googlePlaces.getPredictions("San Francisco");
-```
-
-or you can pass it directly to onChanged parameter of TextFields
-
-```dart
-TextFormField(
-    controller: textEditingController,
-    focusNode: focusNode,
-    onChanged:googlePlaces.getPredictions,
-)
-```
-- Get place details:
-
-```dart
-final placeDetails = await googlePlaces.getPredictionDetail("PLACE_ID");
-print(placeDetails?.formattedAddress);
-```
-
-### Example
-
-Below is an example of integrating Google Places Autocomplete with a Flutter TextField widget:
-
-```dart
-import 'package:flutter/material.dart';
-import 'package:google_places_autocomplete/google_places_autocomplete.dart';
-
 class PlaceSearchScreen extends StatefulWidget {
   @override
   _PlaceSearchScreenState createState() => _PlaceSearchScreenState();
 }
 
 class _PlaceSearchScreenState extends State<PlaceSearchScreen> {
-  late final GooglePlacesAutocomplete _placesAutocomplete;
+  final TextEditingController _searchController = TextEditingController();
+  final String _apiKey = 'YOUR_API_KEY';
+  late GooglePlacesAutocomplete _placesService;
+  List<Prediction> _predictions = [];
+  bool _isLoading = false;
 
   @override
   void initState() {
     super.initState();
-    _placesAutocomplete = GooglePlacesAutocomplete(
-      apiKey: "YOUR_API_KEY",
+    _placesService = GooglePlacesAutocomplete(
+      apiKey: _apiKey,
       predictionsListner: (predictions) {
-        // Handle predictions and update UI
+        setState(() {
+          _predictions = predictions;
+        });
+      },
+      loadingListner: (isLoading) {
+        setState(() {
+          _isLoading = isLoading;
+        });
       },
     );
-    _placesAutocomplete.initialize();
+    _placesService.initialize();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text("Search Places")),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            TextField(
-              decoration: InputDecoration(labelText: "Search Location"),
-              onChanged: (value) => _placesAutocomplete.getPredictions(value),
-            ),
-            // Add widgets to display predictions and handle interactions
-          ],
+    return Column(
+      children: [
+        TextField(
+          controller: _searchController,
+          decoration: InputDecoration(
+            labelText: 'Search for a place',
+            suffixIcon: _isLoading 
+              ? CircularProgressIndicator() 
+              : Icon(Icons.search),
+          ),
+          onChanged: (value) {
+            if (value.isNotEmpty) {
+              _placesService.getPredictions(value);
+            } else {
+              setState(() {
+                _predictions = [];
+              });
+            }
+          },
         ),
-      ),
+        Expanded(
+          child: ListView.builder(
+            itemCount: _predictions.length,
+            itemBuilder: (context, index) {
+              return ListTile(
+                title: Text(_predictions[index].description ?? ''),
+                onTap: () async {
+                  final details = await _placesService.getPredictionDetail(
+                    _predictions[index].placeId ?? '',
+                  );
+                  // Do something with the place details
+                },
+              );
+            },
+          ),
+        ),
+      ],
     );
   }
-
-  @override
-  void dispose() {
-    _placesAutocomplete.dispose();
-    super.dispose();
-  }
 }
-
 ```
 
-## API Reference
-### GooglePlacesAutocomplete Constructor
-```dart
-GooglePlacesAutocomplete({
-  required String apiKey,
-  required ListenerAutoCompletePredictions predictionsListner,
-  ListnerLoadingPredictions? loadingListner;
-  int debounceTime = 300,
-  List<String>? countries,
-  List<String>? primaryTypes,
-  String? language,
-});
-```
+## Model Classes
 
+The package provides the following model classes:
 
-## Support
+### Prediction
 
-Feel free to file issues on the [GitHub](https://github.com/Cuboid-Inc/google_places_autocomplete) repository for:
+Represents a place prediction from the Google Places API autocomplete endpoint.
 
-- Adding support for additional email apps.
-- Reporting bugs or suggesting improvements.
+Key properties:
+- `description`: The human-readable name of the place
+- `placeId`: The ID of the place, which can be used to fetch detailed place information
+- `structuredFormatting`: Contains the main text and secondary text for the prediction
+- `types`: The types of the predicted place (e.g., 'restaurant', 'establishment')
 
-## Contributors
+### PlaceDetails
 
-<table>
-  <tr>
-   <td align="center"><a href="https://github.com/mrcse"><img src="https://avatars.githubusercontent.com/u/73348512?v=4" width="100px;" alt=""/><br /><sub><b>Jamshid Ali</b></sub></a><br /><a href="https://github.com/mrcse" title="Code">💻</a></td>
-  <td align="center"><a href="https://github.com/Mubashir-Saeed1"><img src="https://avatars.githubusercontent.com/u/58908265?v=4" width="100px;" alt=""/><br /><sub><b>Mubashir Saeed</b></sub></a><br />
-  <a href="https://github.com/Mubashir-Saeed1" title="Code">💻</a></td>
+Represents detailed information about a place.
 
-  </tr>
-</table>
+Key properties:
+- `name`: The name of the place
+- `formattedAddress`: The complete address of the place
+- `formattedPhoneNumber`: The phone number in international format
+- `nationalPhoneNumber`: The phone number in local format
+- `website`: The website URL
+- `rating`: The average rating (out of 5)
+- `userRatingsTotal`: Total number of user ratings
+- `geometry`: Contains location information (latitude and longitude)
+
+## Platform Support
+
+This package works on:
+
+- Android
+- iOS
+- Web
+- macOS
+- Windows
+- Linux
+
+## Troubleshooting
+
+### Common Issues
+
+1. **No predictions returned**: Ensure your API key has the Places API enabled and has proper restrictions set.
+
+2. **Web platform issues**: Make sure your API key is properly configured with allowed referrers/domains.
+
+3. **Invalid API key**: Check that your API key is correct and properly formatted.
 
 ## License
 
-This package is distributed under the MIT License. See the [LICENSE](https://raw.githubusercontent.com/Cuboid-Inc/google_places_autocomplete/main/LICENSE) file for details.
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## Acknowledgements
+
+- Google Places API for providing the location data services
