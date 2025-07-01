@@ -169,33 +169,41 @@ class PlaceDetails {
     }
 
     return PlaceDetails(
-      name: map['name'],
+      name: map['displayName']['text'],
       nationalPhoneNumber: map['nationalPhoneNumber'],
       internationalPhoneNumber: map['internationalPhoneNumber'],
       formattedPhoneNumber: map['formattedPhoneNumber'],
       formattedAddress: map['formattedAddress'],
       streetAddress: extractAddressComponent(map['addressComponents'], 'route'),
-      streetNumber:
-          extractAddressComponent(map['addressComponents'], 'street_number'),
+      streetNumber: extractAddressComponent(
+        map['addressComponents'],
+        'street_number',
+      ),
       city: extractAddressComponent(map['addressComponents'], 'locality'),
       state: extractAddressComponent(
-          map['addressComponents'], 'administrative_area_level_1'),
+        map['addressComponents'],
+        'administrative_area_level_1',
+      ),
       region: extractAddressComponent(
-          map['addressComponents'], 'administrative_area_level_2'),
+        map['addressComponents'],
+        'administrative_area_level_2',
+      ),
       zipCode: extractAddressComponent(map['addressComponents'], 'postal_code'),
       country: extractAddressComponent(map['addressComponents'], 'country'),
       location: map['location'] != null
           ? Location.fromMap(map['location'] as Map<String, dynamic>)
           : null,
-      googleMapsUri:
-          map['googleMapsUri'] != null ? map['googleMapsUri'] as String : null,
-      websiteUri:
-          map['websiteUri'] != null ? map['websiteUri'] as String : null,
+      googleMapsUri: map['googleMapsUri'] != null
+          ? map['googleMapsUri'] as String
+          : null,
+      websiteUri: map['websiteUri'] != null
+          ? map['websiteUri'] as String
+          : null,
       website: map['website'] as String?,
       rating: map['rating'] != null ? (map['rating'] as num).toDouble() : null,
       userRatingsTotal: map['userRatingsTotal'] as int?,
-      geometry: map['geometry'] != null
-          ? Geometry.fromJson(map['geometry'] as Map<String, dynamic>)
+      geometry: map['location'] != null
+          ? Geometry.fromJson(map['location'] as Map<String, dynamic>)
           : null,
     );
   }
@@ -210,10 +218,7 @@ class Location {
   final double lng;
 
   /// Constructor for creating a [Location] instance.
-  Location({
-    required this.lat,
-    required this.lng,
-  });
+  Location({required this.lat, required this.lng});
 
   /// Creates a [Location] instance from a map.
   factory Location.fromMap(Map<String, dynamic> json) {
@@ -225,10 +230,7 @@ class Location {
 
   /// Converts the [Location] instance into a map representation.
   Map<String, dynamic> toMap() {
-    return {
-      'lat': lat,
-      'lng': lng,
-    };
+    return {'lat': lat, 'lng': lng};
   }
 }
 

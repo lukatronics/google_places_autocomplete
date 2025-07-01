@@ -71,8 +71,10 @@ class GooglePlacesAutocomplete {
     this.countries,
     this.primaryTypes,
     this.language,
-  }) : assert(debounceTime >= 200,
-            "Debounce time must be at least 200ms to ensure performance.");
+  }) : assert(
+         debounceTime >= 200,
+         "Debounce time must be at least 200ms to ensure performance.",
+       );
 
   /// Initializes the service and sets up the stream for debouncing user input.
   void initialize() {
@@ -114,14 +116,16 @@ class GooglePlacesAutocomplete {
 
       final response = await _dio.post(
         url,
-        options: Options(headers: {
-          "Content-Type": "application/json",
-          "X-Goog-FieldMask":
-              "suggestions.placePrediction.structuredFormat.mainText.text,"
-                  "suggestions.placePrediction.structuredFormat.secondaryText.text,"
-                  "suggestions.placePrediction.placeId",
-          "X-Goog-Api-Key": apiKey,
-        }),
+        options: Options(
+          headers: {
+            "Content-Type": "application/json",
+            "X-Goog-FieldMask":
+                "suggestions.placePrediction.structuredFormat.mainText.text,"
+                "suggestions.placePrediction.structuredFormat.secondaryText.text,"
+                "suggestions.placePrediction.placeId",
+            "X-Goog-Api-Key": apiKey,
+          },
+        ),
         data: jsonEncode({
           "input": query,
           "includedRegionCodes": countries,
@@ -172,14 +176,16 @@ class GooglePlacesAutocomplete {
     try {
       final response = await _dio.get(
         url,
-        options: Options(headers: {
-          "Content-Type": "application/json",
-          "X-Goog-FieldMask":
-              "displayName,formattedAddress,nationalPhoneNumber,"
-                  "internationalPhoneNumber,addressComponents,location,"
-                  "googleMapsUri,websiteUri",
-          "X-Goog-Api-Key": apiKey,
-        }),
+        options: Options(
+          headers: {
+            "Content-Type": "application/json",
+            "X-Goog-FieldMask":
+                "displayName,formattedAddress,nationalPhoneNumber,"
+                "internationalPhoneNumber,addressComponents,location,"
+                "googleMapsUri,websiteUri",
+            "X-Goog-Api-Key": apiKey,
+          },
+        ),
       );
 
       final Map data = response?.data ?? {};
@@ -198,8 +204,8 @@ class GooglePlacesAutocomplete {
 /// A type definition for the autocomplete predictions callback.
 ///
 /// This function is called whenever new predictions are fetched from the API.
-typedef ListnerAutoCompletePredictions = void Function(
-    List<Prediction> predictions);
+typedef ListnerAutoCompletePredictions =
+    void Function(List<Prediction> predictions);
 
 /// A type definition for the loading of autocomplete predictions.
 ///
