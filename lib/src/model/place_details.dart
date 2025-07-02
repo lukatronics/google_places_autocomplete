@@ -12,9 +12,6 @@ class PlaceDetails {
   /// Fully formatted address (Google formattedAddress).
   final String? formattedAddress;
 
-  /// Postal address object rendered into a single string (postalAddress).
-  final String? postalAddress;
-
   /// Street (route) component, e.g. “Main St”.
   final String? streetAddress;
 
@@ -62,7 +59,6 @@ class PlaceDetails {
     this.placeId,
     this.name,
     this.formattedAddress,
-    this.postalAddress,
     this.streetAddress,
     this.streetNumber,
     this.city,
@@ -85,7 +81,6 @@ class PlaceDetails {
   PlaceDetails copyWith({
     String? name,
     String? formattedAddress,
-    String? postalAddress,
     String? streetAddress,
     String? streetNumber,
     String? city,
@@ -104,7 +99,6 @@ class PlaceDetails {
     return PlaceDetails(
       name: name ?? this.name,
       formattedAddress: formattedAddress ?? this.formattedAddress,
-      postalAddress: postalAddress ?? this.postalAddress,
       streetAddress: streetAddress ?? this.streetAddress,
       streetNumber: streetNumber ?? this.streetNumber,
       city: city ?? this.city,
@@ -128,7 +122,6 @@ class PlaceDetails {
     return {
       'name': name,
       'formattedAddress': formattedAddress,
-      'postalAddress': postalAddress,
       'streetAddress': streetAddress,
       'streetNumber': streetNumber,
       'city': city,
@@ -163,7 +156,6 @@ class PlaceDetails {
       placeId: placeId,
       name: map['displayName']?['text'] ?? map['name'],
       formattedAddress: map['formattedAddress'],
-      postalAddress: map['postalAddress'],
       streetAddress: extractAddressComponent(map['addressComponents'], 'route'),
       streetNumber: extractAddressComponent(
         map['addressComponents'],
@@ -210,20 +202,19 @@ class PhotoMetadata {
   });
 
   factory PhotoMetadata.fromMap(Map<String, dynamic> m) => PhotoMetadata(
-    name: m['name'],
-    widthPx: m['widthPx'] ?? 0,
-    heightPx: m['heightPx'] ?? 0,
-    attributions: (m['attributions'] as List?)
-        ?.map((e) => e.toString())
-        .toList(),
-    base64: m['base64'] as String?,
-  );
+        name: m['name'],
+        widthPx: m['widthPx'] ?? 0,
+        heightPx: m['heightPx'] ?? 0,
+        attributions:
+            (m['attributions'] as List?)?.map((e) => e.toString()).toList(),
+        base64: m['base64'] as String?,
+      );
 
   Map<String, dynamic> toMap() => {
-    'name': name,
-    'widthPx': widthPx,
-    'heightPx': heightPx,
-    if (attributions != null) 'attributions': attributions,
-    if (base64 != null) 'base64': base64,
-  };
+        'name': name,
+        'widthPx': widthPx,
+        'heightPx': heightPx,
+        if (attributions != null) 'attributions': attributions,
+        if (base64 != null) 'base64': base64,
+      };
 }

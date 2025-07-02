@@ -209,15 +209,15 @@ class GooglePlacesAutocomplete {
         options: Options(
           headers: {
             "Content-Type": "application/json",
-            "X-Goog-FieldMask":
-                "id,name,photos,formattedAddress,location,postalAddress,types,"
-                    "addressComponents,googleMapsUri,primaryTypeDisplayName,primaryType,displayName",
+            "X-Goog-FieldMask": "id,name,photos,formattedAddress,location,types,"
+                "addressComponents,googleMapsUri,primaryTypeDisplayName,primaryType,displayName",
             "X-Goog-Api-Key": apiKey,
           },
         ),
       );
 
       final Map data = response?.data ?? {};
+      debugPrint("GooglePlacesAutocomplete getPredictionDetail: $data");
       if (data.containsKey("error")) {
         throw Exception(data["error"]);
       }
@@ -231,6 +231,9 @@ class GooglePlacesAutocomplete {
           }
         }
       }
+
+      debugPrint(
+          "GooglePlacesAutocomplete getPredictionDetail after photos: $data");
 
       // Close the billing session so the next search gets a fresh token.
       _sessionToken = null;
