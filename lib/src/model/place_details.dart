@@ -4,6 +4,9 @@ class PlaceDetails {
   /// The name of the place (human‑readable if requested, otherwise resource name).
   final String? name;
 
+  /// The place ID of the place.
+  final String? placeId;
+
   /// Fully formatted address (Google formattedAddress).
   final String? formattedAddress;
 
@@ -54,6 +57,7 @@ class PlaceDetails {
 
   /// Constructor for creating a [PlaceDetails] instance.
   PlaceDetails({
+    this.placeId,
     this.name,
     this.formattedAddress,
     this.postalAddress,
@@ -143,7 +147,7 @@ class PlaceDetails {
   /// Creates a [PlaceDetails] instance from a map.
   ///
   /// The map should be fetched from a Google Places API response.
-  factory PlaceDetails.fromMap(Map<dynamic, dynamic> map) {
+  factory PlaceDetails.fromMap(String placeId, Map<dynamic, dynamic> map) {
     String? extractAddressComponent(List<dynamic> components, String type) {
       for (var component in components) {
         if ((component['types'] as List).contains(type)) {
@@ -154,6 +158,7 @@ class PlaceDetails {
     }
 
     return PlaceDetails(
+      placeId: placeId,
       name: map['displayName']?['text'] ?? map['name'],
       formattedAddress: map['formattedAddress'],
       postalAddress: map['postalAddress'],

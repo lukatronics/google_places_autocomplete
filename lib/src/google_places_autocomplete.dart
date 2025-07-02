@@ -235,7 +235,7 @@ class GooglePlacesAutocomplete {
       // Close the billing session so the next search gets a fresh token.
       _sessionToken = null;
 
-      return PlaceDetails.fromMap(data);
+      return PlaceDetails.fromMap(placeId, data);
     } catch (e) {
       debugPrint("GooglePlacesAutocomplete Error: $e");
       return null;
