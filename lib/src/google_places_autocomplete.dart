@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:google_places_autocomplete/src/dio_api_services.dart';
+import 'package:uuid/uuid.dart';
 import 'package:rxdart/rxdart.dart';
 
 import 'model/place_details.dart';
@@ -50,6 +51,9 @@ class GooglePlacesAutocomplete {
 
   /// Internal HTTP client for making API requests.
   late final DioAPIServices _dio;
+
+  /// One token per user-typing session (Autocomplete + Place Details).
+  String? _sessionToken;
 
   /// A stream controller for debouncing user input.
   final _subject = PublishSubject<String>();
@@ -108,6 +112,9 @@ class GooglePlacesAutocomplete {
       throw Exception("Google Places Service is not initialized.");
     }
 
+    // Ensure we have a token for this typing session
+    _sessionToken ??= const Uuid().v4();
+
     const String url = "https://places.googleapis.com/v1/places:autocomplete";
 
     try {
@@ -128,6 +135,7 @@ class GooglePlacesAutocomplete {
         ),
         data: jsonEncode({
           "input": query,
+          "sessionToken": _sessionToken,
           "includedRegionCodes": countries,
           "includedPrimaryTypes": primaryTypes,
           "languageCode": language,
@@ -171,7 +179,10 @@ class GooglePlacesAutocomplete {
       throw Exception("Google Places Service is not initialized.");
     }
 
-    final String url = "https://places.googleapis.com/v1/places/$placeId";
+    _sessionToken ??= const Uuid().v4();
+
+    final String url =
+        "https://places.googleapis.com/v1/places/$placeId?sessionToken=$_sessionToken";
 
     try {
       final response = await _dio.get(
@@ -193,12 +204,18 @@ class GooglePlacesAutocomplete {
         throw Exception(data["error"]);
       }
 
+      // Close the billing session so the next search gets a fresh token.
+      _sessionToken = null;
+
       return PlaceDetails.fromMap(data);
     } catch (e) {
       debugPrint("GooglePlacesAutocomplete Error: $e");
       return null;
     }
   }
+
+  /// Call when the user clears the search bar or starts a new search flow.
+  void resetSession() => _sessionToken = null;
 }
 
 /// A type definition for the autocomplete predictions callback.
