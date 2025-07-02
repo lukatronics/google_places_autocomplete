@@ -217,20 +217,20 @@ class GooglePlacesAutocomplete {
       );
 
       final Map data = response?.data ?? {};
-      debugPrint("GooglePlacesAutocomplete getPredictionDetail: $data");
+      // debugPrint("GooglePlacesAutocomplete getPredictionDetail: $data");
       if (data.containsKey("error")) {
         throw Exception(data["error"]);
       }
 
-      // Enrich each photo with base64 media
-      if (data['photos'] is List) {
-        for (final photo in data['photos']) {
-          if (photo is Map && photo['name'] != null) {
-            final b64 = await _fetchPhotoBase64(photo['name']);
-            if (b64 != null) photo['base64'] = b64;
-          }
-        }
-      }
+      // // Enrich each photo with base64 media
+      // if (data['photos'] is List) {
+      //   for (final photo in data['photos']) {
+      //     if (photo is Map && photo['name'] != null) {
+      //       final b64 = await _fetchPhotoBase64(photo['name']);
+      //       if (b64 != null) photo['base64'] = b64;
+      //     }
+      //   }
+      // }
 
       debugPrint(
           "GooglePlacesAutocomplete getPredictionDetail after photos: $data");

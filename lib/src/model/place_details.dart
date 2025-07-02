@@ -52,7 +52,7 @@ class PlaceDetails {
   final String? primaryType;
 
   /// Photo metadata list (may contain base64 payloads).
-  final List<PhotoMetadata>? photos;
+  // final List<PhotoMetadata>? photos;
 
   /// Constructor for creating a [PlaceDetails] instance.
   PlaceDetails({
@@ -72,7 +72,7 @@ class PlaceDetails {
     this.types,
     this.primaryTypeDisplayName,
     this.primaryType,
-    this.photos,
+    // this.photos,
   });
 
   /// Creates a copy of the [PlaceDetails] instance with updated values.
@@ -94,7 +94,7 @@ class PlaceDetails {
     List<String>? types,
     String? primaryTypeDisplayName,
     String? primaryType,
-    List<PhotoMetadata>? photos,
+    // List<PhotoMetadata>? photos,
   }) {
     return PlaceDetails(
       name: name ?? this.name,
@@ -113,7 +113,7 @@ class PlaceDetails {
       primaryTypeDisplayName:
           primaryTypeDisplayName ?? this.primaryTypeDisplayName,
       primaryType: primaryType ?? this.primaryType,
-      photos: photos ?? this.photos,
+      // photos: photos ?? this.photos,
     );
   }
 
@@ -135,7 +135,7 @@ class PlaceDetails {
       'types': types,
       'primaryTypeDisplayName': primaryTypeDisplayName,
       'primaryType': primaryType,
-      'photos': photos?.map((e) => e.toMap()).toList(),
+      // 'photos': photos?.map((e) => e.toMap()).toList(),
     };
   }
 
@@ -178,9 +178,9 @@ class PlaceDetails {
       types: (map['types'] as List?)?.cast<String>(),
       primaryTypeDisplayName: map['primaryTypeDisplayName'],
       primaryType: map['primaryType'],
-      photos: (map['photos'] as List?)
-          ?.map((e) => PhotoMetadata.fromMap(e))
-          .toList(),
+      // photos: (map['photos'] as List?)
+      //     ?.map((e) => PhotoMetadata.fromMap(e))
+      //     .toList(),
     );
   }
 }
