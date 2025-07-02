@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 /// Represents the detailed information about a place fetched from the Google Places API.
 
 class PlaceDetails {
