@@ -175,7 +175,7 @@ class GooglePlacesAutocomplete {
     final url =
         'https://places.googleapis.com/v1/$photoName/media?maxWidthPx=$maxWidth&key=$apiKey';
     try {
-      final res = await _dio.get<List<int>>(
+      final res = await _dio.get(
         url,
         options: Options(responseType: ResponseType.bytes),
       );
