@@ -203,46 +203,46 @@ class GooglePlacesAutocomplete {
     final String url =
         "https://places.googleapis.com/v1/places/$placeId?sessionToken=$_sessionToken";
 
-    try {
-      final response = await _dio.get(
-        url,
-        options: Options(
-          headers: {
-            "Content-Type": "application/json",
-            "X-Goog-FieldMask": "id,name,photos,formattedAddress,location,types,"
-                "addressComponents,googleMapsUri,primaryTypeDisplayName,primaryType,displayName",
-            "X-Goog-Api-Key": apiKey,
-          },
-        ),
-      );
+    // try {
+    final response = await _dio.get(
+      url,
+      options: Options(
+        headers: {
+          "Content-Type": "application/json",
+          "X-Goog-FieldMask": "id,name,photos,formattedAddress,location,types,"
+              "addressComponents,googleMapsUri,primaryTypeDisplayName,primaryType,displayName",
+          "X-Goog-Api-Key": apiKey,
+        },
+      ),
+    );
 
-      final Map data = response?.data ?? {};
-      // debugPrint("GooglePlacesAutocomplete getPredictionDetail: $data");
-      if (data.containsKey("error")) {
-        throw Exception(data["error"]);
-      }
-
-      // // Enrich each photo with base64 media
-      // if (data['photos'] is List) {
-      //   for (final photo in data['photos']) {
-      //     if (photo is Map && photo['name'] != null) {
-      //       final b64 = await _fetchPhotoBase64(photo['name']);
-      //       if (b64 != null) photo['base64'] = b64;
-      //     }
-      //   }
-      // }
-
-      debugPrint(
-          "GooglePlacesAutocomplete getPredictionDetail after photos: $data");
-
-      // Close the billing session so the next search gets a fresh token.
-      _sessionToken = null;
-
-      return PlaceDetails.fromMap(placeId, data);
-    } catch (e) {
-      debugPrint("GooglePlacesAutocomplete Error: $e");
-      return null;
+    final Map data = response?.data ?? {};
+    // debugPrint("GooglePlacesAutocomplete getPredictionDetail: $data");
+    if (data.containsKey("error")) {
+      throw Exception(data["error"]);
     }
+
+    // // Enrich each photo with base64 media
+    // if (data['photos'] is List) {
+    //   for (final photo in data['photos']) {
+    //     if (photo is Map && photo['name'] != null) {
+    //       final b64 = await _fetchPhotoBase64(photo['name']);
+    //       if (b64 != null) photo['base64'] = b64;
+    //     }
+    //   }
+    // }
+
+    debugPrint(
+        "GooglePlacesAutocomplete getPredictionDetail after photos: $data");
+
+    // Close the billing session so the next search gets a fresh token.
+    _sessionToken = null;
+
+    return PlaceDetails.fromMap(placeId, data);
+    // } catch (e) {
+    // debugPrint("GooglePlacesAutocomplete Error: $e");
+    // return null;
+    // }
   }
 
   /// Call when the user clears the search bar or starts a new search flow.
