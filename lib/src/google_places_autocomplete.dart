@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
@@ -167,6 +168,24 @@ class GooglePlacesAutocomplete {
     }
   }
 
+  Future<String?> _fetchPhotoBase64(
+    String photoName, {
+    int maxWidth = 800,
+  }) async {
+    final url =
+        'https://places.googleapis.com/v1/$photoName/media?maxWidthPx=$maxWidth&key=$apiKey';
+    try {
+      final res = await _dio.get<List<int>>(
+        url,
+        options: Options(responseType: ResponseType.bytes),
+      );
+      final bytes = Uint8List.fromList(res.data!);
+      return base64Encode(bytes);
+    } catch (_) {
+      return null;
+    }
+  }
+
   /// Fetches detailed information for a specific place using its Place ID.
   ///
   /// Makes a GET request to the Google Places API to retrieve details
@@ -191,9 +210,8 @@ class GooglePlacesAutocomplete {
           headers: {
             "Content-Type": "application/json",
             "X-Goog-FieldMask":
-                "displayName,formattedAddress,nationalPhoneNumber,"
-                "internationalPhoneNumber,addressComponents,location,"
-                "googleMapsUri,websiteUri",
+                "id,name,photos,formattedAddress,location,postalAddress,types,"
+                "addressComponents,googleMapsUri,primaryTypeDisplayName,primaryType,displayName",
             "X-Goog-Api-Key": apiKey,
           },
         ),
@@ -202,6 +220,16 @@ class GooglePlacesAutocomplete {
       final Map data = response?.data ?? {};
       if (data.containsKey("error")) {
         throw Exception(data["error"]);
+      }
+
+      // Enrich each photo with base64 media
+      if (data['photos'] is List) {
+        for (final photo in data['photos']) {
+          if (photo is Map && photo['name'] != null) {
+            final b64 = await _fetchPhotoBase64(photo['name']);
+            if (b64 != null) photo['base64'] = b64;
+          }
+        }
       }
 
       // Close the billing session so the next search gets a fresh token.
