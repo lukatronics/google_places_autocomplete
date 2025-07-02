@@ -77,9 +77,9 @@ class GooglePlacesAutocomplete {
     this.primaryTypes,
     this.language,
   }) : assert(
-         debounceTime >= 200,
-         "Debounce time must be at least 200ms to ensure performance.",
-       );
+          debounceTime >= 200,
+          "Debounce time must be at least 200ms to ensure performance.",
+        );
 
   /// Initializes the service and sets up the stream for debouncing user input.
   void initialize() {
@@ -129,8 +129,8 @@ class GooglePlacesAutocomplete {
             "Content-Type": "application/json",
             "X-Goog-FieldMask":
                 "suggestions.placePrediction.structuredFormat.mainText.text,"
-                "suggestions.placePrediction.structuredFormat.secondaryText.text,"
-                "suggestions.placePrediction.placeId",
+                    "suggestions.placePrediction.structuredFormat.secondaryText.text,"
+                    "suggestions.placePrediction.placeId",
             "X-Goog-Api-Key": apiKey,
           },
         ),
@@ -179,7 +179,7 @@ class GooglePlacesAutocomplete {
         url,
         options: Options(responseType: ResponseType.bytes),
       );
-      final bytes = Uint8List.fromList(res.data!);
+      final bytes = Uint8List.fromList(res?.data);
       return base64Encode(bytes);
     } catch (_) {
       return null;
@@ -211,7 +211,7 @@ class GooglePlacesAutocomplete {
             "Content-Type": "application/json",
             "X-Goog-FieldMask":
                 "id,name,photos,formattedAddress,location,postalAddress,types,"
-                "addressComponents,googleMapsUri,primaryTypeDisplayName,primaryType,displayName",
+                    "addressComponents,googleMapsUri,primaryTypeDisplayName,primaryType,displayName",
             "X-Goog-Api-Key": apiKey,
           },
         ),
@@ -249,8 +249,8 @@ class GooglePlacesAutocomplete {
 /// A type definition for the autocomplete predictions callback.
 ///
 /// This function is called whenever new predictions are fetched from the API.
-typedef ListnerAutoCompletePredictions =
-    void Function(List<Prediction> predictions);
+typedef ListnerAutoCompletePredictions = void Function(
+    List<Prediction> predictions);
 
 /// A type definition for the loading of autocomplete predictions.
 ///
